@@ -10,7 +10,7 @@ public class GameManager : MonoBehaviour {
 	public int baseTimeLeft=30;
 
 	public static GameManager instance = null;
-	public static GameObject playerInstance;
+	public static Player playerInstance;
 	public static bool gameInitialized;
 	public GameObject[] enemies;
 	MapManager mapScript;
@@ -40,7 +40,7 @@ public class GameManager : MonoBehaviour {
 		mapSize = MenuScript.selectedMapSize;
 		nextWaveCalculation ();
 		mapScript.setupMap(mapSize);
-		playerInstance = GameObject.FindGameObjectWithTag("Player");
+		playerInstance = GameObject.FindGameObjectWithTag("Player").GetComponent<Player>();
 		gameInitialized = true;
 	}
 	void Update(){
@@ -119,29 +119,26 @@ public class GameManager : MonoBehaviour {
 	public void increaseEnemiesLeft(){
 		enemiesLeft++;
 	}
-	int getPlayerRessource(string ressource){
-		return GameManager.playerInstance.GetComponent<Player> ().getRessources () [ressource];
-	}
 
 	void nextLevelSetup (){
-		PlayerPrefs.SetInt ("copperAmount", getPlayerRessource ("copper"));
-		PlayerPrefs.SetInt ("ironAmount", getPlayerRessource ("iron"));
-		PlayerPrefs.SetInt ("coalAmount", getPlayerRessource ("coal"));
-		PlayerPrefs.SetInt ("uraniumAmount", getPlayerRessource ("uranium"));
+		PlayerPrefs.SetInt ("copperAmount", playerInstance.getRessources()["copper"]);
+		PlayerPrefs.SetInt ("ironAmount", playerInstance.getRessources()["iron"]);
+		PlayerPrefs.SetInt ("coalAmount", playerInstance.getRessources()["coal"]);
+		PlayerPrefs.SetInt ("uraniumAmount", playerInstance.getRessources()["uranium"]);
 		PlayerPrefs.SetInt ("actualWave", GameManager.instance.getWave ());
 	}
 	public void nextLevel(){
 		//level++;
-		PlayerPrefs.SetInt("goldAmount", getPlayerRessource("gold"));
+		PlayerPrefs.SetInt("goldAmount", playerInstance.getRessources()["gold"]);
 		nextLevelSetup ();
 		PlayerPrefs.Save ();
 		SceneManager.LoadScene("Level1");
 	}
 	public void backToMenu(){
-		PlayerPrefs.SetInt("goldAmount", getPlayerRessource("gold"));
+		PlayerPrefs.SetInt("goldAmount", playerInstance.getRessources()["gold"]);
 		if(PlayerPrefs.GetInt ("bestWave", 1)<GameManager.instance.getWave())
 			PlayerPrefs.SetInt("bestWave", GameManager.instance.getWave());
-		if (!GameManager.playerInstance.GetComponent<Player> ().isDead ()) {
+		if (!playerInstance.isDead ()) {
 			nextLevelSetup ();
 			PlayerPrefs.SetInt ("actualMapSize", MenuScript.selectedMapSize);
 		} else {

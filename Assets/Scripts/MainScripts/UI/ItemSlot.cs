@@ -8,44 +8,40 @@ public class ItemSlot : MonoBehaviour {
 	public Image itemSlotIcon;
 	public Text itemSlotText;
 
+	UsableItem item;
 	void Start () {
 		itemSlotText.text = "";
-		setIcon (null);
+		//itemSlotIcon = null;
 	}
-	public void updateIconColor(){
-		GameObject building = GameManager.playerInstance.GetComponent<Player> ().getBuildingToPlace ();
-		GameObject selection = GameManager.playerInstance.GetComponent<Player> ().getSelectedTile ();
-		GameObject item = GameManager.playerInstance.GetComponent<Player> ().getItemInSlot ();
-		if (building != null && item != null && selection!=null) {
-			string itemType=item.GetComponent<UsableItem> ().getType ();
-			//GameObject upgradeBuilding=selection.GetComponent<Building>().getUpgrade(itemType);
-			bool hasUpgrade = selection.GetComponent<Building> ().hasUpgrade (itemType);
-			if (hasUpgrade) {
-				if (GameManager.playerInstance.GetComponent<Player> ().enoughRessources (building.GetComponent<Building>().getUpgradeCosts(itemType)))
-					itemSlotIcon.color = new Color32 (255, 255, 255, 255);
-				else
-					itemSlotIcon.color = new Color32 (180, 0, 0, 100);
-			}
-		}
-		else itemSlotIcon.color= new Color32(180,0,0,100);
-	}
-	public void setIcon(GameObject item){
+
+	public void setItem(UsableItem item){
+		this.item = item;
 		if (item != null) {
-			itemSlotIcon.sprite = item.GetComponent<UsableItem> ().getIcon ();
-			itemSlotText.text = item.GetComponent<UsableItem> ().getType ();
+			itemSlotIcon.sprite = item.getIcon ();
+			itemSlotText.text = item.getName();
 			itemSlotIcon.enabled = true;
+			updateIconColor();
 		} else {
 			itemSlotIcon.sprite = null;
 			itemSlotText.text = "";
 			itemSlotIcon.enabled = false;
 		}
+	}
 
+	public void updateIconColor(){
+		//Building building = GameManager.playerInstance.GetComponent<Player> ().getBuildingToPlace ();
+		//Building selection = player.getSelectedTile ();
+		//UsableItem item = player.getItemInSlot ();
+		if(item != null){
+			if (item.isActivable())
+				itemSlotIcon.color = new Color32 (255, 255, 255, 255);
+			else
+				itemSlotIcon.color = new Color32 (180, 0, 0, 100);
+		}
 	}
 	public void useItem(){
-		if (GameManager.playerInstance.GetComponent<Player> ().getItemInSlot ()!=null && GameManager.playerInstance.GetComponent<Player> ().getItemInSlot ().GetComponent<UsableItem> ().activate ()) {
-			GameManager.playerInstance.GetComponent<Player> ().setItemInSlot(null);
-			setIcon (null);
-			GameManager.playerInstance.GetComponent<Player> ().setBuildingToPlace (null);
+		if (item!=null && item.activate ()) {
+			setItem(null);
 			updateIconColor ();
 		} 
 	}

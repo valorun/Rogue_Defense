@@ -13,8 +13,8 @@ public class HpIcon : MonoBehaviour {
 	}
 	
 	// Update is called once per frame
-	public void updateDisplay () {
-		playerHp.text = "" + GameManager.playerInstance.GetComponent<Player> ().getHp ();
+	public void updateDisplay (int hp) {
+		playerHp.text = "" + hp;
 		anim.SetTrigger ("changed");
 	}
 }

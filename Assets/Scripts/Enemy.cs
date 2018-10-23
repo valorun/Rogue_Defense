@@ -26,7 +26,7 @@ public class Enemy : Destructible {
 	// Use this for initialization
 	void Start () {
 		mapManager=MapManager.instance;
-		player = GameManager.playerInstance;
+		player = GameManager.playerInstance.gameObject;
 		audioSource = gameObject.GetComponent<AudioSource>();
 
 		int playerX = (int)gameObject.transform.position.x;
@@ -116,11 +116,11 @@ public class Enemy : Destructible {
 		hp -= loss;
 		if (hp <= 0){
 			GameManager.instance.decreaseEnemiesLeft ();
-			GameManager.playerInstance.GetComponent<Player>().getRessources ()["gold"]+=reward;
+			GameManager.playerInstance.getRessources ()["gold"]+=reward;
 			Destroy(gameObject);
 		}
-
 	}
+
 	void rotateToTarget(Vector2 targetPos){
 		Vector3 targetDir = new Vector3(targetPos.x, targetPos.y, 0) - transform.position;
 		float angle = Mathf.Atan2(targetDir.y, targetDir.x) * Mathf.Rad2Deg;

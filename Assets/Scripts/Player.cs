@@ -6,13 +6,13 @@ using UnityEngine.EventSystems;
 
 public class Player : Destructible {
 
-	public event System.Action OnRessourcesChangeEvent;
-	public event System.Action OnCollectItemEvent;
-	public event System.Action OnPlaceBuildingEvent;
-	public event System.Action OnSelectBuildingEvent;
+	public event System.Action<Dictionary<string, int>> OnRessourcesChangeEvent;
+	public event System.Action<UsableItem> OnCollectItemEvent;
+	public event System.Action<Building> OnPlaceBuildingEvent;
+	public event System.Action<Building> OnSelectBuildingEvent;
 	public event System.Action OnDeselectBuildingEvent;
 	public event System.Action OnDiedEvent;
-	public event System.Action OnHPChangeEvent;
+	public event System.Action<int> OnHPChangeEvent;
 
 	public int digDamagesToRocks;
 
@@ -23,8 +23,8 @@ public class Player : Destructible {
 
 	Dictionary<string, int> ressources;
 	Dictionary<string, int> digDamages;
-	private GameObject buildingToPlace; //for construction
-	private GameObject selectedTile;
+	private Building buildingToPlace; //for construction
+	private Building selectedTile;
 	bool placingObject;
 
 	Vector2 playerGridPos; //player position in the grid
@@ -43,7 +43,7 @@ public class Player : Destructible {
 	private Vector2 endPosition; //
 	private bool moving; //
 
-	GameObject itemSlot;
+	UsableItem itemSlot;
 
 	void Awake () {
 		buildingToPlace = null;
@@ -122,16 +122,18 @@ public class Player : Destructible {
 
 	//déselection du batiment selectionné
 	public void deselection(){
-		foreach (Transform child in selectionTiles){
-			Destroy(child.gameObject);
-		}
-		if(selectedTile!=null )selectedTile.GetComponent<Building> ().deselection ();
-		selectedTile = null;
-		if (OnDeselectBuildingEvent != null)
-		{
-			OnDeselectBuildingEvent();
-		}
+		if(selectionTiles != null){
+			foreach (Transform child in selectionTiles){
+				Destroy(child.gameObject);
+			}
+			if(selectedTile!=null )selectedTile.deselection ();
+			selectedTile = null;
+			if (OnDeselectBuildingEvent != null)
+			{
+				OnDeselectBuildingEvent();
+			}
 		//UIManager.instance.getCostsBar().updateDisplay ();
+		}
 	}
 
 	//déplacement vers l'endroit indiqué, utilisé par les inputs PC
@@ -143,7 +145,8 @@ public class Player : Destructible {
 		}
 		sprite.GetComponent<Animator> ().SetBool ("moving", true);
 		rotateToTarget (new Vector2(direction.x+transform.position.x, direction.y+transform.position.y));
-		endPlaceBuilding ();
+		if(placingObject)
+			endPlaceBuilding ();
 	}
 
 	//déplacement tout droit dans la direction indiquée, utilisé par les inputs mobile
@@ -191,7 +194,8 @@ public class Player : Destructible {
 			    && Vector2.Distance (hit.collider.transform.position, gameObject.transform.position) <= maxInteractionDistance) { //check if the distance between the play and the object is correct
 				if (hit.collider.gameObject.GetComponent<OreVein> () != null) {
 					OreVein oreVein = hit.collider.gameObject.GetComponent<OreVein> ();
-					oreVein.damage (digDamages [oreVein.getType ()]);
+					int collected = oreVein.collect (digDamages [oreVein.getType ()]);
+					gainRessource(oreVein.getType(), collected);
 				} else
 					hit.collider.gameObject.GetComponent<Destructible> ().damage (digDamagesToRocks);
 				rotateToTarget (hit.collider.transform.position);
@@ -200,32 +204,37 @@ public class Player : Destructible {
 			} else if ((hit.collider.tag == "Floor" && placingObject)//building construction
 			           && Vector2.Distance (hit.collider.transform.position, gameObject.transform.position) <= maxConstructionDistance//check if the distance between the play and the object is correct
 			           && (Mathf.Abs (playerGridPos.x - hitGridPos.x) > 0.01f || Mathf.Abs (playerGridPos.y - hitGridPos.y) > 0.01f)) { //check if the selected case is not player's case
-				if (enoughRessources (buildingToPlace.GetComponent<Building>().getCosts()))
-					mapManager.placeBuilding (buildingToPlace, hit.collider.transform.position);
+				if (enoughRessources (buildingToPlace.GetComponent<Building>().getCosts())){
+					mapManager.placeBuilding (buildingToPlace.gameObject, hit.collider.transform.position);
+					buy(buildingToPlace);
+				}
 				else PopupMessage.instance.ShowMessage("Not enough ressources");
 				//endPlaceBuilding ();
 			} 
 			else if ((hit.collider.tag == "Item") //item collection
 			       && Vector2.Distance (hit.collider.transform.position, gameObject.transform.position) <= maxInteractionDistance) { //check if the distance between the play and the object is correct
-				if(hit.collider.gameObject.GetComponent<Item> ().collect ())
+				if(hit.collider.gameObject.GetComponent<Item> ().collect (this))
 				audioSource.PlayOneShot (collectSound);
 			} 
 			else if (hit.collider.tag == "Building" && !placingObject){ //building selection
-				selectedTile = hit.collider.gameObject;
-				buildingToPlace = null;
-				if (itemSlot != null && itemSlot.GetComponent<UsableItem> () != null
-				   && selectedTile.GetComponent<Building> ().hasUpgrade (itemSlot.GetComponent<UsableItem> ().type)) {
-					buildingToPlace = selectedTile;
-				}
+				selectedTile = hit.collider.gameObject.GetComponent<Building> ();
 				//UIManager.instance.getCostsBar().updateDisplay ();
-				selectedTile.GetComponent<Building> ().selection ();
-				if (OnSelectBuildingEvent != null)
-				{
-					OnSelectBuildingEvent();
+				selectedTile.selection ();
+				if (OnSelectBuildingEvent != null){
+					Debug.Log(selectedTile);
+					OnSelectBuildingEvent(selectedTile);
 				}
+				if (itemSlot != null //check if the player has an upgrade item
+				   && itemSlot is UpgradeItem) {
+					setBuildingToPlace(((UpgradeItem) itemSlot).getBuildingUpgrade(selectedTile));
+				}
+				else
+					setBuildingToPlace(null);
 			}
-			else
+			else{
 				Debug.Log ("Rien touché");
+				endPlaceBuilding();
+			}
 			if(placingObject)endPlaceBuilding ();
 		}
 	}
@@ -241,27 +250,38 @@ public class Player : Destructible {
 		return digDamagesToRocks;
 	}
 
-	public GameObject getSelectedTile(){
+	public Building getSelectedTile(){
 		return selectedTile;
 	}
 
-	public GameObject getBuildingToPlace(){
+	public Building getBuildingToPlace(){
 		return buildingToPlace;
 	}
 
-	public void setBuildingToPlace(GameObject go){
-		buildingToPlace = go;
+	public UsableItem getItemInSlot(){
+		return itemSlot;
+	}
+	public void setItemInSlot(UsableItem item){
+		itemSlot=item;
+		if(OnCollectItemEvent != null)
+			OnCollectItemEvent(item);
 	}
 
-	public void placeBuilding(GameObject building){
+	public void setBuildingToPlace(Building building){
+		buildingToPlace = building;
+		if (OnPlaceBuildingEvent != null)
+			OnPlaceBuildingEvent(building);
+	}
+
+	public void placeBuilding(Building building){
 		StopCoroutine ("move");
 		if (buildingToPlace!=null && building.GetInstanceID () == buildingToPlace.GetInstanceID ())
 			endPlaceBuilding ();
 		else {
-			if(selectedTile!=null )selectedTile.GetComponent<Building> ().deselection ();
+			if(selectedTile!=null )selectedTile.deselection ();
 			deselection ();
 			placingObject = true;
-			buildingToPlace = building;
+			setBuildingToPlace(building);
 			//UIManager.instance.getCostsBar().updateDisplay ();
 			for (int x = -Mathf.RoundToInt(maxConstructionDistance); x <= Mathf.RoundToInt(maxConstructionDistance); x++) {
 				for (int y = -Mathf.RoundToInt(maxConstructionDistance); y <= Mathf.RoundToInt(maxConstructionDistance); y++) {
@@ -280,14 +300,10 @@ public class Player : Destructible {
 			}
 
 		}
-		if (OnPlaceBuildingEvent != null)
-		{
-			OnPlaceBuildingEvent();
-		}
 
 	}
 	public void endPlaceBuilding(){
-		buildingToPlace = null;
+		setBuildingToPlace(null);
 		placingObject = false;
 		deselection ();
 	}
@@ -324,7 +340,7 @@ public class Player : Destructible {
 		}
 		if (OnHPChangeEvent != null)
 		{
-			OnHPChangeEvent();
+			OnHPChangeEvent(hp);
 		}
 	}
 		
@@ -342,24 +358,20 @@ public class Player : Destructible {
 	private void OnCollisionStay2D(Collision2D collision){
 		//destination = transform.position;
 	}
-	public GameObject takeItem(GameObject item){
-		if (item.GetComponent<UsableItem> () != null && itemSlot == null) {
-			itemSlot = item;
-			UIManager.instance.getItemSlot().setIcon (item);
-			return null;
-		} else if (item.GetComponent<UsableItem> () != null) { //if player already have an object, replace him and return the old object
-			GameObject tempSlot = itemSlot;
-			itemSlot = item;
-			UIManager.instance.getItemSlot().setIcon (item);
+	// take an item and return the old item replaced
+	public UsableItem takeItem(UsableItem item){
+		if (item != null) { //if player already have an object, replace him and return the old object
+			UsableItem tempSlot = itemSlot;
+			setItemInSlot(item);
 			return tempSlot; //return old object to change his position
 		}
-		return itemSlot;
+		return null;
 	}
-	public GameObject getItemInSlot(){
-		return itemSlot;
-	}
-	public void setItemInSlot(GameObject item){
-		itemSlot=item;
+	public UsableItem dropItem(){
+		UsableItem tempItem = itemSlot;
+		setItemInSlot(null);
+		endPlaceBuilding();
+		return tempItem;
 	}
 
 	public void gainRessource(string type, int value){
@@ -367,7 +379,7 @@ public class Player : Destructible {
 		//call the event (Used for UI)
 		if (OnRessourcesChangeEvent != null)
 		{
-			OnRessourcesChangeEvent();
+			OnRessourcesChangeEvent(ressources);
 		}
 	}
 
@@ -376,13 +388,28 @@ public class Player : Destructible {
 		//call the event (Used for UI)
 		if (OnRessourcesChangeEvent != null)
 		{
-			OnRessourcesChangeEvent();
+			OnRessourcesChangeEvent(ressources);
 		}
 	}
 
 	public void upgradeDigDamage(string type, int value){
 		digDamages [type] += value;
 
+	}
+
+	public void buy(Building building){
+		foreach (RessourcesManager.SerializedRessource r in building.getCosts()) {
+			loseRessource(r.name, r.value);
+		}
+	}
+	//sell the building and give back 1/4 of his cost
+	public void sellSelection(){
+		if(selectedTile != null){
+			foreach (RessourcesManager.SerializedRessource r in selectedTile.getCosts()) {
+				gainRessource (r.name, r.value/4);
+			}
+			selectedTile.destroy();
+		}
 	}
 
 

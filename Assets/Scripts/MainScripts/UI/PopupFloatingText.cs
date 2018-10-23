@@ -15,7 +15,7 @@ public class PopupFloatingText : MonoBehaviour {
 	}
 
 	public void ShowMessage (string message, Transform pos, Color32 color) {
-		Camera playerCam = GameManager.playerInstance.GetComponent<Player> ().getCamera ();
+		Camera playerCam = GameManager.playerInstance.getCamera ();
 		Vector2 screenPos = playerCam.WorldToScreenPoint (new Vector2 (pos.position.x + Random.Range (-0.5f, 0.5f), pos.position.y+0.5f));
 		GameObject tempTextContainer= Instantiate (guiTextContainer) as GameObject;
 		tempTextContainer.transform.SetParent (canvas.transform, false);

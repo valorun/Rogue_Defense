@@ -104,6 +104,20 @@ public class MapManager : MonoBehaviour {
 		Debug.Log (spawnPos.ToString());
 		return spawnPos [random];
 	}
+	public List<GameObject> getNearbyGameObjects(Vector2 pos, int radius){
+		List<GameObject> nearbyGameObjects = new List<GameObject>();
+		for (int x = -radius; x <= radius; x++){
+			for (int y = -radius; y <= radius; y++){
+				if (x == 0 && y == 0)
+					continue;
+				GameObject go = getObjectAt(x+(int)pos.x, y+(int)pos.y);
+				if (go != null)
+					nearbyGameObjects.Add(go);
+				
+			}
+		}
+		return nearbyGameObjects;
+	} 
 	public void placeObjectAt(GameObject obj, Vector2 pos){
 		int x = (int)pos.x;
 		int y = (int)pos.y;

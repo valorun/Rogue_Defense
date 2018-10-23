@@ -23,7 +23,10 @@ public class ShopScript : MonoBehaviour {
 	public Text coalCollectUpText;
 	public Text uraniumCollectUpText;
 
+	private Player player;
+
 	void Start(){
+		player = GameManager.playerInstance;
 		updateUpgradesButtons ();
 	}
 
@@ -44,7 +47,7 @@ public class ShopScript : MonoBehaviour {
 
 	}
 	int getPlayerDigDamage(string ressource){
-		return GameManager.playerInstance.GetComponent<Player> ().getDigDamages () [ressource];
+		return player.getDigDamages () [ressource];
 	}
 	int goldCostsCalculation(string ressource){
 		int ressourceAmount = getPlayerDigDamage(ressource);
@@ -55,10 +58,10 @@ public class ShopScript : MonoBehaviour {
 		return 60 + ressourceAmount + ressourceAmount / 2;
 	}
 	public void upgradeCollect(string ressource){
-		if (GameManager.playerInstance.GetComponent<Player> ().enoughRessource("gold", goldCostsCalculation(ressource)) && GameManager.playerInstance.GetComponent<Player> ().enoughRessource (ressource, ressourceCalculation(ressource))) {
-			GameManager.playerInstance.GetComponent<Player> ().upgradeDigDamage(ressource, 1);
-			GameManager.playerInstance.GetComponent<Player> ().loseRessource ("gold", goldCostsCalculation(ressource));
-			GameManager.playerInstance.GetComponent<Player> ().loseRessource (ressource, goldCostsCalculation(ressource));
+		if (player.enoughRessource("gold", goldCostsCalculation(ressource)) && player.enoughRessource (ressource, ressourceCalculation(ressource))) {
+			player.upgradeDigDamage(ressource, 1);
+			player.loseRessource ("gold", goldCostsCalculation(ressource));
+			player.loseRessource (ressource, goldCostsCalculation(ressource));
 		}
 		updateUpgradesButtons ();
 	}

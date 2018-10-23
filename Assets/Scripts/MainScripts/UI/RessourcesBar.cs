@@ -12,14 +12,11 @@ public class RessourcesBar : MonoBehaviour {
 	public Text goldText;
 	
 	// Update is called once per frame
-	public void updateDisplay () {
-		copperText.text = "" + getPlayerRessource("copper");
-		ironText.text = "" + getPlayerRessource("iron");
-		coalText.text = "" + getPlayerRessource("coal");
-		uraniumText.text = "" + getPlayerRessource("uranium");
-		goldText.text = "" + getPlayerRessource("gold");
-	}
-	int getPlayerRessource(string ressource){
-		return GameManager.playerInstance.GetComponent<Player> ().getRessources () [ressource];
+	public void updateDisplay (Dictionary<string, int> ressources) {
+		copperText.text = "" + ressources["copper"];
+		ironText.text = "" + ressources["iron"];
+		coalText.text = "" + ressources["coal"];
+		uraniumText.text = "" + ressources["uranium"];
+		goldText.text = "" + ressources["gold"];
 	}
 }

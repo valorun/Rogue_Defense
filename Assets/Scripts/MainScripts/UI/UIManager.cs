@@ -31,31 +31,44 @@ public class UIManager : MonoBehaviour {
 
 
 	void Start () {
-		player = GameManager.playerInstance.GetComponent<Player> ();
-		costsBar.updateDisplay();
-		hpIcon.updateDisplay ();
-		ressourcesBar.updateDisplay ();
+		player = GameManager.playerInstance;
+		costsBar.updateDisplay(null);
+		hpIcon.updateDisplay (player.getHp());
+		ressourcesBar.updateDisplay (player.getRessources());
 
-		player.OnRessourcesChangeEvent += ressourcesBar.updateDisplay;
-		player.OnRessourcesChangeEvent += itemSlot.updateIconColor;
-		player.OnSelectBuildingEvent += itemSlot.updateIconColor;
-		player.OnDeselectBuildingEvent += itemSlot.updateIconColor;
-		player.OnSelectBuildingEvent += costsBar.updateDisplay;
-		player.OnDeselectBuildingEvent += costsBar.updateDisplay;
-		player.OnPlaceBuildingEvent += costsBar.updateDisplay;
+		player.OnSelectBuildingEvent += OnUpdateSelection;
+		player.OnDeselectBuildingEvent += OnUpdateSelection;
 
-		player.OnSelectBuildingEvent += buildingsBar.updateDisplay;
-		player.OnDeselectBuildingEvent += buildingsBar.updateDisplay;
-
-		player.OnSelectBuildingEvent += selectionBar.updateDisplay;
-		player.OnDeselectBuildingEvent += selectionBar.updateDisplay;
+		player.OnRessourcesChangeEvent += OnRessourcesChange;
+		player.OnCollectItemEvent += OnCollectItem;
 
 		player.OnDiedEvent += deathMenu.display;
 		player.OnDiedEvent += checkUiCanBeDiplayed;
 		player.OnHPChangeEvent += hpIcon.updateDisplay;
 
+		player.OnPlaceBuildingEvent += OnPlaceBuildingEvent;
+
 		GameManager.instance.OnLevelInfoUpdateEvent += updateLevelInfos;
 	}
+	void OnUpdateSelection(){
+		OnUpdateSelection(null);
+	}
+	void OnUpdateSelection(Building selection){
+		itemSlot.updateIconColor();
+		buildingsBar.updateDisplay(selection);
+		selectionBar.updateDisplay(selection);
+	}
+	void OnRessourcesChange(Dictionary<string, int> ressources){
+		ressourcesBar.updateDisplay(ressources);
+		itemSlot.updateIconColor();
+	}
+	void OnCollectItem(UsableItem item){
+		itemSlot.setItem(item);
+	}
+	void OnPlaceBuildingEvent(Building building){
+		costsBar.updateDisplay(building);
+	}
+
 	void Awake(){
 		if (instance == null)instance = this;
 	}
@@ -73,9 +86,6 @@ public class UIManager : MonoBehaviour {
 		waveText.text = "Wave " + GameManager.instance.getWave();
 
 	}
-	int getPlayerRessource(string ressource){
-		return GameManager.playerInstance.GetComponent<Player> ().getRessources () [ressource];
-	}
 		
 	void checkUiCanBeDiplayed(){
 		if (!deathCanvas.enabled && !shopCanvas.enabled && !levelEndCanvas.enabled && !helpCanvas.enabled) {
@@ -89,7 +99,7 @@ public class UIManager : MonoBehaviour {
 	public void displayShop(){
 		shopCanvas.enabled = !shopCanvas.enabled;
 		checkUiCanBeDiplayed ();
-		costsBar.updateDisplay ();
+		costsBar.updateDisplay (null);
 		if (Time.timeScale == 1f)
 			Time.timeScale = 0f;
 		else
@@ -98,7 +108,7 @@ public class UIManager : MonoBehaviour {
 	public void displayHelp(){
 		helpCanvas.enabled = !helpCanvas.enabled;
 		checkUiCanBeDiplayed ();
-		costsBar.updateDisplay ();
+		costsBar.updateDisplay (player.getBuildingToPlace());
 		if (Time.timeScale == 1f)
 			Time.timeScale = 0f;
 		else

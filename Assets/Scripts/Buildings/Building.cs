@@ -25,24 +25,18 @@ public class Building : Destructible {
 		selectionTiles = transform.Find ("SelectionTiles");
 		audioSource = gameObject.GetComponent<AudioSource> ();
 		maxHp = hp;
-		buy ();
+		//buy ();
 	}
 
 	public RessourcesManager.SerializedRessource[] getCosts(){
 		return costs;
 	}
 
-	public void buy(){
-		foreach (RessourcesManager.SerializedRessource r in costs) {
-			GameManager.playerInstance.GetComponent<Player> ().loseRessource(r.name, r.value);
-		}
-
-	}
 	public override void damage(int loss){
 		hp -= loss;
 		Instantiate (damageParticles, transform.position, Quaternion.identity);
 		if (hp <= 0){
-			MapManager.instance.resetPosition (gameObject.transform.position);
+			destroy();
 		}
 	}
 	public int getHp(){
@@ -72,12 +66,10 @@ public class Building : Destructible {
 
 	public bool upgrade(string type){
 		GameObject tempUpgrade = getUpgrade (type);
-		if (tempUpgrade != null && GameManager.playerInstance.GetComponent<Player> ().enoughRessources (getUpgradeCosts(type))) {
+		if (tempUpgrade != null) {
 			MapManager.instance.resetPosition (gameObject.transform.position);
 			MapManager.instance.placeObjectAt (tempUpgrade, transform.position);
-			foreach (RessourcesManager.SerializedRessource r in costs) { // give back ressources of the building, because the upgrade will be buy after
-				GameManager.playerInstance.GetComponent<Player> ().gainRessource (r.name, r.value);
-			}
+			Destroy(gameObject);
 			return true;
 		}
 		return false;
@@ -118,11 +110,8 @@ public class Building : Destructible {
 		}
 		return null;
 	}
-	//sell the building and give back 1/4 of his cost
-	public void sell(){
-		foreach (RessourcesManager.SerializedRessource r in costs) {
-			GameManager.playerInstance.GetComponent<Player> ().gainRessource (r.name, r.value/4);
-		}
+	
+	public void destroy(){
 		MapManager.instance.resetPosition (gameObject.transform.position);
 	}
 

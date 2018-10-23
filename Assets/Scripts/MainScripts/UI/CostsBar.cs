@@ -13,6 +13,7 @@ public class CostsBar : MonoBehaviour {
 	public Text goldCostText;
 
 	Animator anim;
+
 	void Awake(){
 		anim = gameObject.GetComponent<Animator> ();
 		anim.speed = 3;
@@ -20,22 +21,13 @@ public class CostsBar : MonoBehaviour {
 	void OnEnable() {
 		show ();
 	}
-	// Update is called once per frame
-	public void updateDisplay(){
-		GameObject building = GameManager.playerInstance.GetComponent<Player> ().getBuildingToPlace ();
-		GameObject selection = GameManager.playerInstance.GetComponent<Player> ().getSelectedTile ();
-		GameObject item = GameManager.playerInstance.GetComponent<Player> ().getItemInSlot ();
-		if (building != null && building.GetComponent<Building> () != null) {
-			show ();
-			buildingNameText.text = building.GetComponent<Building> ().getName ();
-			RessourcesManager.SerializedRessource[] costs = building.GetComponent<Building> ().getCosts ();
 
-			if (selection != null && item != null) {
-				string upgradeType = item.GetComponent<UsableItem> ().getType ();
-				if (building.GetComponent<Building> ().hasUpgrade (upgradeType)) {
-					costs = building.GetComponent<Building> ().getUpgradeCosts (upgradeType);
-				}
-			}
+	public void updateDisplay(Building building){
+		if (building != null) {
+			show ();
+			buildingNameText.text = building.getName ();
+			RessourcesManager.SerializedRessource[] costs = building.getCosts ();
+
 			foreach (RessourcesManager.SerializedRessource r in costs) {
 				if (r.name == "copper") {
 					copperCostText.text = "" + r.value;

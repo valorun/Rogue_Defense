@@ -22,13 +22,7 @@ public class RessourcesManager : MonoBehaviour {
 	}
 
 	public static Dictionary<string, int> getRessourcesDictionnary (){
-		Dictionary<string, int> ressources=new Dictionary<string,int>();
-		ressources.Add ("gold",0);
-		ressources.Add ("copper",0);
-		ressources.Add ("iron",0);
-		ressources.Add ("coal",0);
-		ressources.Add ("uranium",0);
-		return ressources;
+		return getRessourcesDictionnary(0);
 	}
 	public static Dictionary<string, int> getRessourcesDictionnary (int i){
 		Dictionary<string, int> ressources=new Dictionary<string,int>();

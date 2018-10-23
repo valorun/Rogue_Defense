@@ -7,9 +7,6 @@ public class LevelEndMenu : MonoBehaviour {
 
 	public Text levelEndScoreText;
 
-	int getPlayerRessource(string ressource){
-		return GameManager.playerInstance.GetComponent<Player> ().getRessources () [ressource];
-	}
 	public void display(){
 		levelEndScoreText.text = "";
 		if (PlayerPrefs.GetInt ("bestWave", 1) < GameManager.instance.getWave ())

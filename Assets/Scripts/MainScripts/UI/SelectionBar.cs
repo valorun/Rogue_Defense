@@ -14,13 +14,13 @@ public class SelectionBar : MonoBehaviour {
 	public Text selectionHealingPower;
 	bool isActive;
 	Animator anim;
+
 	// Update is called once per frame
 	void Start(){
 		anim = gameObject.GetComponent<Animator> ();
 		hide ();
 	}
-	public void updateDisplay () {
-		GameObject selection = GameManager.playerInstance.GetComponent<Player> ().getSelectedTile ();
+	public void updateDisplay (Building selection) {
 		if (selection != null && selection.GetComponent<Building> () != null) {
 			if(!isActive)show ();
 			selectionHp.text = "" + selection.GetComponent<Building> ().getHp ();
@@ -43,6 +43,11 @@ public class SelectionBar : MonoBehaviour {
 		} else
 			if(isActive)hide ();
 	}
+
+	public void sellBuilding(){
+		GameManager.playerInstance.sellSelection();
+	}
+
 	void hide(){
 		anim.SetBool ("isActive", false);
 		isActive = false;
@@ -50,8 +55,5 @@ public class SelectionBar : MonoBehaviour {
 	void show(){
 		anim.SetBool ("isActive", true);
 		isActive = true;
-	}
-	public void sellBuilding(){
-		GameManager.playerInstance.GetComponent<Player>().getSelectedTile().GetComponent<Building>().sell();
 	}
 }

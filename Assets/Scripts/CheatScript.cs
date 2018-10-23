@@ -5,11 +5,17 @@ using UnityEngine;
 public class CheatScript : MonoBehaviour {
 
 	// Update is called once per frame
+	private Player player;
+
+	void Start(){
+		player = GameManager.playerInstance;
+	}
+
 	void Update () {
-		if(Input.GetKeyDown(KeyCode.G))GameManager.playerInstance.GetComponent<Player> ().gainRessource ("gold", 100);
-		if(Input.GetKeyDown(KeyCode.H))GameManager.playerInstance.GetComponent<Player> ().gainRessource ("copper", 100);
-		if(Input.GetKeyDown(KeyCode.J))GameManager.playerInstance.GetComponent<Player> ().gainRessource ("iron", 100);
-		if(Input.GetKeyDown(KeyCode.K))GameManager.playerInstance.GetComponent<Player> ().gainRessource ("coal", 100);
-		if(Input.GetKeyDown(KeyCode.L))GameManager.playerInstance.GetComponent<Player> ().gainRessource ("uranium", 100);
+		if(Input.GetKeyDown(KeyCode.G))player.gainRessource ("gold", 100);
+		if(Input.GetKeyDown(KeyCode.H))player.gainRessource ("copper", 100);
+		if(Input.GetKeyDown(KeyCode.J))player.gainRessource ("iron", 100);
+		if(Input.GetKeyDown(KeyCode.K))player.gainRessource ("coal", 100);
+		if(Input.GetKeyDown(KeyCode.L))player.gainRessource ("uranium", 100);
 	}
 }

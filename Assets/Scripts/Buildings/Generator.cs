@@ -40,20 +40,13 @@ public class Generator : Building {
 	}
 	GameObject findLesserPowered(){
 		GameObject lesserPowered = null;
-		for (int x = -1; x <= 1; x++){
-			for (int y = -1; y <= 1; y++){
-				if (x == 0 && y == 0)
-					continue;
-				int checkX = (int)transform.position.x + x;
-				int checkY = (int)transform.position.y + y;
-				if (checkX >= 0 && checkX < mapManager.getColumns() && checkY >= 0 && checkY < mapManager.getRows() ) {
-					GameObject tempObj = mapManager.getObjectAt (checkX, checkY);
-					if (tempObj != null && tempObj.GetComponent<PoweredBuilding> () != null) {
-						if (lesserPowered == null || tempObj.GetComponent<PoweredBuilding> ().getMissingPower () > lesserPowered.GetComponent<PoweredBuilding> ().getMissingPower ())
-							lesserPowered = tempObj;
-					}
-				}
+		Vector2 pos = new Vector2((int)transform.position.x, (int)transform.position.y);
+		foreach(GameObject tempObj in MapManager.instance.getNearbyGameObjects(pos, 1)){
+			if (tempObj.GetComponent<PoweredBuilding> () != null) {
+				if (lesserPowered == null || tempObj.GetComponent<PoweredBuilding> ().getMissingPower () > lesserPowered.GetComponent<PoweredBuilding> ().getMissingPower ())
+					lesserPowered = tempObj;
 			}
+	
 		}
 		return lesserPowered;
 	}

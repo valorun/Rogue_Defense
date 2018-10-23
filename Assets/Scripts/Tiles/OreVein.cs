@@ -11,20 +11,23 @@ public class OreVein : Destructible {
 	}
 
 	public override void damage(int loss){
-		int previousHp = hp;
 		hp -= loss;
-		PopupFloatingText.instance.ShowMessage ("+"+loss, transform, RessourcesManager.getRessourceColor(type));
-		//GameManager.playerInstance.GetComponent<Player>().getRessources ()[type]+=previousHp-hp;
-		GameManager.playerInstance.GetComponent<Player>().gainRessource(type, previousHp-hp);
-
 		Vector3 particlesPos = new Vector3 (transform.position.x, transform.position.y, transform.position.z-1);
 		Instantiate (damageParticles, particlesPos, Quaternion.identity);
 		if (hp <= 0){
 			MapManager.instance.resetPosition (gameObject.transform.position);
 			//Destroy(gameObject);
 		}
-
 	}
+
+	public int collect(int loss){
+		if(loss > hp)
+			loss = hp;
+		PopupFloatingText.instance.ShowMessage ("+"+loss, transform, RessourcesManager.getRessourceColor(type));
+		damage(loss);
+		return loss;
+	}
+
 	public string getType(){
 		return type;
 	}

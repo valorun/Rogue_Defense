@@ -2,53 +2,30 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public class UsableItem : Item {
+public abstract class UsableItem : Item {
 
 	public Sprite icon;
-	public string type;
-
-	public override bool collect(){
-		//GameManager.playerInstance.GetComponent<Player>().takeItem(gameObject);
-		GameObject playerItemSlot=GameManager.playerInstance.GetComponent<Player> ().takeItem (gameObject);
+	protected Player player;
+	public override bool collect(Player player){
+		this.player = player;
+		UsableItem playerItemSlot=player.takeItem (this);
+		gameObject.GetComponent<SpriteRenderer> ().enabled = false; //hide the physical object
+		gameObject.GetComponent<BoxCollider2D> ().enabled = false;
 		if (playerItemSlot == null) {
 			MapManager.instance.clearPosition (gameObject.transform.position);
-			gameObject.GetComponent<SpriteRenderer> ().enabled = false;
-			gameObject.GetComponent<BoxCollider2D> ().enabled = false;
-			return true;
 		} else {
-			MapManager.instance.replaceObjectAt (playerItemSlot, (Vector2)transform.position);
-			gameObject.GetComponent<SpriteRenderer> ().enabled = false;
-			gameObject.GetComponent<BoxCollider2D> ().enabled = false;
+			MapManager.instance.replaceObjectAt (playerItemSlot.gameObject, (Vector2)transform.position); //place the old item to this item position
 			playerItemSlot.GetComponent<SpriteRenderer> ().enabled = true;
 			playerItemSlot.GetComponent<BoxCollider2D> ().enabled = true;
 			return true;
 		}
 		//StartCoroutine (PopupMessage.instance.ShowMessage("You already have an object", 2f));
-		return false;
+		return true;
 	}
-	public bool activate(){
-		if (getPlayerSelectedTile () != null) {
-			if (getPlayerSelectedTile ().GetComponent<Building> () != null) {
-				if (getPlayerSelectedTile ().GetComponent<Building> ().hasUpgrade (type)) {
-					bool result = getPlayerSelectedTile ().GetComponent<Building> ().upgrade (type);
-					if (!result)
-						 PopupMessage.instance.ShowMessage ("Not enough ressources");
-					return result;
-				}
-				else PopupMessage.instance.ShowMessage ("Item cannot be used on this building");
-			}
-			else PopupMessage.instance.ShowMessage ("Item must be used on a building");
-		} 
-		else PopupMessage.instance.ShowMessage ("No building selected");
-		return false;
-	}
+	public abstract bool activate();
+
+	public abstract bool isActivable();
 	public Sprite getIcon(){
 		return icon;
-	}
-	public string getType(){
-		return type;
-	}
-	GameObject getPlayerSelectedTile(){
-		return GameManager.playerInstance.GetComponent<Player> ().getSelectedTile ();
 	}
 }

@@ -14,11 +14,11 @@ public class BuildingsBar : MonoBehaviour {
 	void OnEnable() {
 		show ();
 	}
-	public void selectBuilding(GameObject building){
+	public void selectBuilding(Building building){
 		GameManager.playerInstance.GetComponent<Player>().placeBuilding(building);
 	}
-	public void updateDisplay(){
-		GameObject selection = GameManager.playerInstance.GetComponent<Player> ().getSelectedTile ();
+	public void updateDisplay(Building selection){
+		//GameObject selection = GameManager.playerInstance.GetComponent<Player> ().getSelectedTile ();
 		if (!isActive && selection == null) {
 			show ();
 		} else if (isActive && selection != null)
