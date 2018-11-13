@@ -1,5 +1,6 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
+using System.Linq;
 using UnityEngine;
 
 public class Enemy : Destructible {
@@ -77,33 +78,49 @@ public class Enemy : Destructible {
 		}
 	}
 	IEnumerator move(){
-		foreach(PathFind.Point point in path) {
-			//Debug.Log ("following next point");
-			GameObject objAtPoint=mapManager.getObjectAt (point.x, point.y);
-			if (objAtPoint!=null && objAtPoint.tag == "Building") {
+		if(path.Count == 0){
+			needNewPath = true;
+			yield break;
+		}
+		PathFind.Point attackTargetPoint = path [path.Count - 1];
+		attackTargetPoint = path.FirstOrDefault(p=>mapManager.getObjectAt(p.x, p.y) != null &&
+							 mapManager.getObjectAt(p.x, p.y).tag == "Building"); // get the first building in the path ...
+		GameObject attackTarget = null;
+
+		if(attackTargetPoint != null){
+			attackTarget = 	mapManager.getObjectAt(attackTargetPoint.x, attackTargetPoint.y);
+			// if any building in the path exists, attack it
+			if(Vector2.Distance (transform.position, attackTarget.transform.position) <= maxAttackDistance){
+				rotateToTarget (attackTarget.transform.position);
+				attack (attackTarget);
 				needNewPath = true;
-				rotateToTarget (objAtPoint.transform.position);
-				attack (objAtPoint);
-				break;
+				yield break;
 			}
-			Vector2 itemPos = new Vector2(point.x, point.y);
-			while (Vector2.Distance(transform.position, itemPos) > .0001) {
-				rotateToTarget (itemPos);
-				transform.position = Vector2.MoveTowards(transform.position, itemPos, speed * Time.deltaTime);
+		}
+
+		//if there is no building or not in range, travel through the path
+		foreach(PathFind.Point point in path) {
+			GameObject objectAtPoint = mapManager.getObjectAt(point.x, point.y);
+			if(objectAtPoint != null && objectAtPoint.tag == "Building") // if the next position is a building, immediatly stop
+				yield break;
+			Vector2 objectPos = new Vector2(point.x, point.y);
+			while (Vector2.Distance(transform.position, objectPos) > .0001) { //move to next point
+				rotateToTarget (objectPos);
+				transform.position = Vector2.MoveTowards(transform.position, objectPos, speed * Time.deltaTime);
 				yield return null;
 			}
 
 			PathFind.Point actualPlayerPos = new PathFind.Point ((int)player.gameObject.transform.position.x,
 				(int)player.gameObject.transform.position.y);
 			if (path [path.Count - 1] != actualPlayerPos) { //check if the player have moved
-				needNewPath = true;
 				break;
 			}
 		}
+
 		needNewPath = true;
 	}
 	void attack(GameObject obj){
-		if (Vector2.Distance (transform.position, obj.transform.position) <= maxAttackDistance && (nextAttack <= time)) {
+		if ( nextAttack <= time ) {
 			Animator anim = GetComponent<Animator> ();
 			if (anim != null)
 				anim.SetTrigger ("attack");
