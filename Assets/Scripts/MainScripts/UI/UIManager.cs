@@ -36,8 +36,8 @@ public class UIManager : MonoBehaviour {
 		hpIcon.updateDisplay (player.getHp());
 		ressourcesBar.updateDisplay (player.getRessources());
 
-		player.OnSelectBuildingEvent += OnUpdateSelection;
-		player.OnDeselectBuildingEvent += OnUpdateSelection;
+		player.OnSelectBuildingEvent += OnSelectBuilding;
+		player.OnDeselectBuildingEvent += OnDeselectBuilding;
 
 		player.OnRessourcesChangeEvent += OnRessourcesChange;
 		player.OnCollectItemEvent += OnCollectItem;
@@ -50,8 +50,13 @@ public class UIManager : MonoBehaviour {
 
 		GameManager.instance.OnLevelInfoUpdateEvent += updateLevelInfos;
 	}
-	void OnUpdateSelection(){
+	void OnSelectBuilding(Building selection){
+		OnUpdateSelection(selection);
+		selection.OnHPChangeEvent += selectionBar.setHpDisplay;
+	}
+	void OnDeselectBuilding(Building selection){
 		OnUpdateSelection(null);
+		selection.OnHPChangeEvent -= selectionBar.setHpDisplay;
 	}
 	void OnUpdateSelection(Building selection){
 		itemSlot.updateIconColor();

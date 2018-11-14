@@ -18,7 +18,7 @@ public class Enemy : Destructible {
 
 	private float nextAttack;
 	private float time;
-	bool needNewPath=false;
+	//bool needNewPath=true;
 	AudioSource audioSource;
 	public AudioClip attackSound;
 
@@ -30,21 +30,21 @@ public class Enemy : Destructible {
 		player = GameManager.playerInstance.gameObject;
 		audioSource = gameObject.GetComponent<AudioSource>();
 
-		int playerX = (int)gameObject.transform.position.x;
-		int playerY = (int)gameObject.transform.position.y;
-		self=new PathFind.Point(playerX, playerY);
-
-		int x = (int)player.gameObject.transform.position.x;
-		int y = (int)player.gameObject.transform.position.y;
-		target = new PathFind.Point(x, y);
-
 		attackDamage += (int)(GameManager.instance.getWave ()*0.1f*attackDamage);
 		hp += (int)(GameManager.instance.getWave ()*0.1f*hp);
 		reward+=(int)(GameManager.instance.getWave ()*0.1f*reward);
-		setupPathfinding ();
-		StartCoroutine (move ());
+
+		path = new List<PathFind.Point>();
 	}
 	void setupPathfinding(){
+		int playerX = (int) Mathf.Round(gameObject.transform.position.x);
+		int playerY = (int) Mathf.Round(gameObject.transform.position.y);
+		self=new PathFind.Point(playerX, playerY);
+
+		int x = (int) Mathf.Round(player.gameObject.transform.position.x);
+		int y = (int) Mathf.Round(player.gameObject.transform.position.y);
+		target = new PathFind.Point(x, y);
+
 		float[,] pathsValuesGrid = mapManager.getPathsValuesGrid ();
 		int columns = mapManager.getColumns();
 		int rows = mapManager.getRows();
@@ -56,77 +56,92 @@ public class Enemy : Destructible {
 		// get path
 		// path will either be a list of Points (x, y), or an empty list if no path is found.
 		path = PathFind.Pathfinding.FindPath(grid, self, target);
-		/*foreach(PathFind.Point point in path){
-			Debug.Log ("x:"+point.x+ " y:"+point.y);
-		}*/
 	}
-	void updatePath(){
-		self.x = (int)Mathf.Round(gameObject.transform.position.x);
-		self.y = (int)Mathf.Round(gameObject.transform.position.y);
-		target.x = (int)Mathf.Round(player.gameObject.transform.position.x);
-		target.y = (int)Mathf.Round(player.gameObject.transform.position.y);
-		setupPathfinding ();
 
-	}
 	// Update is called once per frame
 	void Update () {
 		time=GameManager.instance.getTime();
-		reCalculatePath ();
+		updatePath ();
+		move();
 		if (self.x == target.x && self.y == target.y) {
 			rotateToTarget (player.transform.position);
 			attack (player);
 		}
 	}
-	IEnumerator move(){
-		if(path.Count == 0){
-			needNewPath = true;
-			yield break;
+	void updatePath(){
+		if (path.Count == 0 && nextPathCalculation <= time) {
+			Debug.Log("path");
+			setupPathfinding();
+			nextPathCalculation = time + pathCalculationSpeed;
 		}
+	}
+
+	void move(){
+		if(path.Count == 0){
+			Debug.Log(path.Count);
+			return;
+		}
+
 		PathFind.Point attackTargetPoint = path [path.Count - 1];
 		attackTargetPoint = path.FirstOrDefault(p=>mapManager.getObjectAt(p.x, p.y) != null &&
 							 mapManager.getObjectAt(p.x, p.y).tag == "Building"); // get the first building in the path ...
 		GameObject attackTarget = null;
 
+		// if any building in the path exists, attack it
 		if(attackTargetPoint != null){
 			attackTarget = 	mapManager.getObjectAt(attackTargetPoint.x, attackTargetPoint.y);
-			// if any building in the path exists, attack it
-			if(Vector2.Distance (transform.position, attackTarget.transform.position) <= maxAttackDistance){
-				rotateToTarget (attackTarget.transform.position);
-				attack (attackTarget);
-				needNewPath = true;
-				yield break;
-			}
+		}
+		// else, focus player
+		else{
+			attackTarget = player;
 		}
 
-		//if there is no building or not in range, travel through the path
-		foreach(PathFind.Point point in path) {
-			GameObject objectAtPoint = mapManager.getObjectAt(point.x, point.y);
-			if(objectAtPoint != null && objectAtPoint.tag == "Building") // if the next position is a building, immediatly stop
-				yield break;
-			Vector2 objectPos = new Vector2(point.x, point.y);
-			while (Vector2.Distance(transform.position, objectPos) > .0001) { //move to next point
-				rotateToTarget (objectPos);
-				transform.position = Vector2.MoveTowards(transform.position, objectPos, speed * Time.deltaTime);
-				yield return null;
-			}
-
-			PathFind.Point actualPlayerPos = new PathFind.Point ((int)player.gameObject.transform.position.x,
-				(int)player.gameObject.transform.position.y);
-			if (path [path.Count - 1] != actualPlayerPos) { //check if the player have moved
-				break;
-			}
+		if(Vector2.Distance (transform.position, attackTarget.transform.position) <= maxAttackDistance){ // if in range
+			attack(attackTarget);
+			return;
 		}
 
-		needNewPath = true;
+		// if there is no building or not in range, travel through the path
+		PathFind.Point point = path[0];
+		GameObject objectAtPoint = mapManager.getObjectAt(point.x, point.y);
+		if(objectAtPoint != null && objectAtPoint.tag == "Building" && 
+			Vector2.Distance (transform.position, objectAtPoint.transform.position) <= maxAttackDistance){ // if the next position is a building and in range, immediatly {
+			return;
+		}
+		Vector2 objectPos = new Vector2(point.x, point.y);
+		if (Vector2.Distance(transform.position, objectPos) > .0001) { //move to next point
+			rotateToTarget (objectPos);
+			transform.position = Vector2.MoveTowards(transform.position, objectPos, speed * Time.deltaTime);
+			return;
+		}
+		else{
+			path.RemoveAt(0); // delete the first point if the enemy is near
+			if (playerHasMoved()) //and if the player has moved, the path is obsolete
+				path.Clear();
+		}
+		
 	}
+	
+	bool playerHasMoved(){
+		if(path.Count == 0)
+			return false;
+		PathFind.Point actualPlayerPos = new PathFind.Point ((int)player.gameObject.transform.position.x,
+			(int)player.gameObject.transform.position.y);
+		return (path [path.Count - 1] != actualPlayerPos);
+	}
+
 	void attack(GameObject obj){
-		if ( nextAttack <= time ) {
-			Animator anim = GetComponent<Animator> ();
-			if (anim != null)
-				anim.SetTrigger ("attack");
-			obj.gameObject.GetComponent<Destructible> ().damage (attackDamage);
-			nextAttack = time + attackSpeed;
-			audioSource.PlayOneShot (attackSound);
+		if(Vector2.Distance (transform.position, obj.transform.position) <= maxAttackDistance){
+			rotateToTarget (obj.transform.position);
+				
+			if ( nextAttack <= time ) {
+				Animator anim = GetComponent<Animator> ();
+				if (anim != null)
+					anim.SetTrigger ("attack");
+				obj.gameObject.GetComponent<Destructible> ().damage (attackDamage);
+				nextAttack = time + attackSpeed;
+				audioSource.PlayOneShot (attackSound);
+			}
 		}
 	}
 	public override void damage(int loss){
@@ -142,16 +157,6 @@ public class Enemy : Destructible {
 		Vector3 targetDir = new Vector3(targetPos.x, targetPos.y, 0) - transform.position;
 		float angle = Mathf.Atan2(targetDir.y, targetDir.x) * Mathf.Rad2Deg;
 		transform.rotation = Quaternion.AngleAxis(angle+90, Vector3.forward);
-	}
-
-	void reCalculatePath(){
-		if (needNewPath && nextPathCalculation <= time) {
-			needNewPath = false;
-			StopCoroutine ("move");
-			updatePath ();
-			StartCoroutine ("move");
-			nextPathCalculation = time + pathCalculationSpeed;
-		}
 	}
 
 }

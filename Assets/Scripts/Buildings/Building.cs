@@ -3,6 +3,8 @@ using System.Collections.Generic;
 using UnityEngine;
 
 public class Building : Destructible {
+	public event System.Action<int> OnHPChangeEvent;
+
 	public string name;
 	public RessourcesManager.SerializedRessource[] costs;
 	protected int maxHp;
@@ -38,6 +40,8 @@ public class Building : Destructible {
 		if (hp <= 0){
 			destroy();
 		}
+		if (OnHPChangeEvent != null)
+			OnHPChangeEvent(hp);
 	}
 	public int getHp(){
 		return hp;
@@ -47,6 +51,8 @@ public class Building : Destructible {
 			hp = maxHp;
 		else
 			hp += value;
+		if (OnHPChangeEvent != null)
+			OnHPChangeEvent(hp);
 	}
 	public int getMissingHp(){
 		return maxHp - hp;

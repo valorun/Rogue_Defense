@@ -21,9 +21,9 @@ public class MineralAbsorber : Generator {
 	void collectNearbyOre(){
 		Vector2 pos = new Vector2((int)transform.position.x, (int)transform.position.y);
 		foreach(GameObject tempObj in MapManager.instance.getNearbyGameObjects(pos, 1)){
-					if (tempObj != null && tempObj.GetComponent<OreVein> () != null) {
-						tempObj.GetComponent<OreVein> ().damage (production);
-					}
+			if (tempObj.GetComponent<OreVein> () != null) {
+				tempObj.GetComponent<OreVein> ().damage (production);
+			}
 		}
 		productionTick = time + powerGenSpeed;
 	}

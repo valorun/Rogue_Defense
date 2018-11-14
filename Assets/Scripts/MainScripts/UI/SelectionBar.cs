@@ -23,7 +23,7 @@ public class SelectionBar : MonoBehaviour {
 	public void updateDisplay (Building selection) {
 		if (selection != null && selection.GetComponent<Building> () != null) {
 			if(!isActive)show ();
-			selectionHp.text = "" + selection.GetComponent<Building> ().getHp ();
+			setHpDisplay(selection.GetComponent<Building> ().getHp ());
 
 			if (selection != null && selection.GetComponent<PoweredBuilding> () != null) {
 				powBuildingSelection.SetActive (true);
@@ -42,6 +42,10 @@ public class SelectionBar : MonoBehaviour {
 				healerSelection.SetActive (false);
 		} else
 			if(isActive)hide ();
+	}
+
+	public void setHpDisplay(int hp){
+		selectionHp.text = "" + hp;
 	}
 
 	public void sellBuilding(){

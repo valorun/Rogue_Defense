@@ -45,7 +45,9 @@ public class UpgradeItem : UsableItem {
     }
 
 	public Building getBuildingUpgrade(Building building){
-		return building.getUpgrade(type).GetComponent<Building>();
+		if(building.hasUpgrade(type))
+			return building.getUpgrade(type).GetComponent<Building>();
+		return null;
 	}
     
 	public string getType(){

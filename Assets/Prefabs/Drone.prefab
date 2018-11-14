@@ -212,7 +212,7 @@ MonoBehaviour:
     type: 2}
   hp: 7
   speed: 2
-  maxAttackDistance: 1
+  maxAttackDistance: 0.8
   attackDamage: 1
   attackSpeed: 1
   reward: 1

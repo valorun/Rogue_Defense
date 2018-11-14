@@ -10,7 +10,7 @@ public class Player : Destructible {
 	public event System.Action<UsableItem> OnCollectItemEvent;
 	public event System.Action<Building> OnPlaceBuildingEvent;
 	public event System.Action<Building> OnSelectBuildingEvent;
-	public event System.Action OnDeselectBuildingEvent;
+	public event System.Action<Building> OnDeselectBuildingEvent;
 	public event System.Action OnDiedEvent;
 	public event System.Action<int> OnHPChangeEvent;
 
@@ -126,14 +126,12 @@ public class Player : Destructible {
 			foreach (Transform child in selectionTiles){
 				Destroy(child.gameObject);
 			}
-			if(selectedTile!=null )selectedTile.deselection ();
-			selectedTile = null;
-			if (OnDeselectBuildingEvent != null)
-			{
-				OnDeselectBuildingEvent();
-			}
-		//UIManager.instance.getCostsBar().updateDisplay ();
 		}
+		if(selectedTile!=null ) selectedTile.deselection ();
+		Building tempSelectedTile = selectedTile;
+		selectedTile = null;
+		if (OnDeselectBuildingEvent != null && tempSelectedTile != null)
+			OnDeselectBuildingEvent(tempSelectedTile);
 	}
 
 	//déplacement vers l'endroit indiqué, utilisé par les inputs PC
