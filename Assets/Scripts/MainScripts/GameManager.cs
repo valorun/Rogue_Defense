@@ -44,7 +44,7 @@ public class GameManager : MonoBehaviour {
 		gameInitialized = true;
 	}
 	void Update(){
-		if (!playerInstance.GetComponent<Player> ().isDead ()) {
+		if (playerInstance != null && !playerInstance.GetComponent<Player> ().isDead ()) {
 			timeCalculation ();
 			if (timeLeft > 0)
 				Countdown ();

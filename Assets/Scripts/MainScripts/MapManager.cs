@@ -9,7 +9,6 @@ public class MapManager : MonoBehaviour {
 	public GameObject spawnTile;
 	private int spawnTilesDimension; //dimension of spawn tiles
 	public GameObject player; //player gameobject to place
-	//public GameObject[] enemies; //player gameobject to place
 	public GameObject[] wallTiles; //all different paterns
 	public GameObject[] floorTiles;
 	public GameObject[] outerWallTiles;
@@ -120,7 +119,7 @@ public class MapManager : MonoBehaviour {
 		return nearbyGameObjects;
 	} 
 	public void placeObjectAt(GameObject obj, Vector2 pos){
-		placeObjectAt(obj, pos);
+		placeObjectAt(obj, (Vector3)pos);
 	}
 	public void placeObjectAt(GameObject obj, Vector3 pos){
 		int x = (int)pos.x;
@@ -269,7 +268,5 @@ public class MapManager : MonoBehaviour {
 		placeObjectAtRandom (copperVeinTiles, copperVeinMinCount, copperVeinMaxCount);
 		placeObjectAtRandom (uraniumVeinTiles, uraniumVeinMinCount, uraniumVeinMaxCount);
 		placeObjectAtRandom (wallTiles, wallMinCount, wallMaxCount);
-		//placeObjectAtRandom (enemy);
 	}
-
 }
