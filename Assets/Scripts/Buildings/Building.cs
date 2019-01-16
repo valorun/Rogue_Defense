@@ -7,7 +7,6 @@ public class Building : Destructible {
 
 	public string name;
 	public RessourcesManager.SerializedRessource[] costs;
-	protected int maxHp;
 	public UpgradeBuilding[] upgradeBuildings;
 	public GameObject selectionMask;
 	protected Transform selectionTiles;
@@ -15,19 +14,22 @@ public class Building : Destructible {
 
 	void OnValidate(){ //check if the costs corresponds to the existings ressources
 		RessourcesManager.SerializedRessource[] ressources = RessourcesManager.getRessourceList ();
-		if (costs.Length != ressources.Length)costs = RessourcesManager.getRessourceList ();
+		if (costs.Length != ressources.Length){
+			costs = ressources;
+			return;
+		}
 		bool namesChanged = false;
 		for(int i=0; i<ressources.Length;i++){
 			if (costs[i].name != ressources[i].name)
 				namesChanged = true;
 		}
-		if (namesChanged) costs = RessourcesManager.getRessourceList ();
+		if (namesChanged) costs = ressources;
 	}
-	protected virtual void Awake () {
+	protected override void Awake () {
+		base.Awake();
 		selectionTiles = transform.Find ("SelectionTiles");
 		audioSource = gameObject.GetComponent<AudioSource> ();
 		maxHp = hp;
-		//buy ();
 	}
 
 	public RessourcesManager.SerializedRessource[] getCosts(){
@@ -43,19 +45,14 @@ public class Building : Destructible {
 		if (OnHPChangeEvent != null)
 			OnHPChangeEvent(hp);
 	}
+
 	public int getHp(){
 		return hp;
 	}
-	public void heal(int value){
-		if (value + hp > maxHp)
-			hp = maxHp;
-		else
-			hp += value;
+	public override void heal(int value){
+		base.heal(value);
 		if (OnHPChangeEvent != null)
 			OnHPChangeEvent(hp);
-	}
-	public int getMissingHp(){
-		return maxHp - hp;
 	}
 	public string getName(){
 		return name;

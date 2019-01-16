@@ -1,5 +1,5 @@
 fileFormatVersion: 2
-guid: be4db9b6169031348a1f2197098a37f6
+guid: 2550f68f36da7e64face9292a1e5e4fa
 TrueTypeFontImporter:
   externalObjects: {}
   serializedVersion: 4
@@ -8,13 +8,12 @@ TrueTypeFontImporter:
   characterSpacing: 0
   characterPadding: 1
   includeFontData: 1
-  fontName: Starcraft
+  fontName: Eurostile
   fontNames:
-  - Starcraft
-  fallbackFontReferences:
-  - {fileID: 12800000, guid: 1fc457f4c6c1003408ec77852f1d2034, type: 3}
+  - Eurostile
+  fallbackFontReferences: []
   customCharacters: 
-  fontRenderingMode: 0
+  fontRenderingMode: 1
   ascentCalculationMode: 1
   useLegacyBoundsCalculation: 0
   shouldRoundAdvanceValue: 1

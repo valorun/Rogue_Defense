@@ -31,10 +31,4 @@ public class OreVein : Destructible {
 	public string getType(){
 		return type;
 	}
-	public int getHp (){
-		return hp;
-	}
-	public void heal(int value){
-		hp += value;
-	}
 }

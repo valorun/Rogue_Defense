@@ -53,10 +53,15 @@ public class Healer : PoweredBuilding {
 	}
 	public override void selection(){
 		base.selection ();
-		Vector2 pos = new Vector2((int)transform.position.x, (int)transform.position.y);
-		foreach(GameObject tempObj in MapManager.instance.getNearbyGameObjects(pos, 1)){
-			GameObject mask=Instantiate (healingMask, new Vector3(pos.x,pos.y, -1),  Quaternion.identity) as GameObject;
-			mask.transform.SetParent (selectionTiles);
+		for (int x = -1; x <= 1; x++) {
+			for (int y = -1; y <= 1; y++) {
+				int checkX = (int)transform.position.x + x;
+				int checkY = (int)transform.position.y + y;
+				if (x == 0 && y == 0)
+					continue;
+				GameObject mask=Instantiate (healingMask, new Vector3(checkX,checkY, -1),  Quaternion.identity) as GameObject;
+				mask.transform.SetParent (selectionTiles);
+			}
 		}
 	}
 

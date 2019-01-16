@@ -44,6 +44,7 @@ public class MapManager : MonoBehaviour {
 	void Awake(){
 		if (instance == null)instance = this;
 	}
+
 	// This method create the grid positions and setup the main board
 	void initializeMap(){
 		//positionsGrid.Clear ();
@@ -99,7 +100,7 @@ public class MapManager : MonoBehaviour {
 			return randomPos;
 		}
 	}
-	Vector2 randomSpawnPostion(){
+	Vector2 randomSpawnPosition(){
 		int random = Random.Range (0, spawnPos.Length);
 		Debug.Log (spawnPos.ToString());
 		return spawnPos [random];
@@ -119,15 +120,7 @@ public class MapManager : MonoBehaviour {
 		return nearbyGameObjects;
 	} 
 	public void placeObjectAt(GameObject obj, Vector2 pos){
-		int x = (int)pos.x;
-		int y = (int)pos.y;
-		if (!mapIsFull () && slotsGrid [x, y] == null) {
-			GameObject instance=Instantiate (obj, pos, obj.transform.rotation); //obj.transform.rotation = default gameObjetct rotation rotation
-			if(obj.tag=="Player")slotsGrid [x, y]=null; //enemies and player don't take up space.
-			else slotsGrid [x, y] = instance;
-			updatePathValue (x, y);
-			instance.transform.SetParent (boardHolder);
-		}
+		placeObjectAt(obj, pos);
 	}
 	public void placeObjectAt(GameObject obj, Vector3 pos){
 		int x = (int)pos.x;
@@ -198,7 +191,7 @@ public class MapManager : MonoBehaviour {
 		}
 	}
 	public void spawnEnemy(GameObject enemy){
-		GameObject instance=Instantiate (enemy, randomSpawnPostion(), enemy.transform.rotation); //obj.transform.rotation = default gameObjetct rotation rotation
+		GameObject instance=Instantiate (enemy, randomSpawnPosition(), enemy.transform.rotation); //obj.transform.rotation = default gameObjetct rotation rotation
 		instance.transform.SetParent (boardHolder);
 	}
 	//delete GameObject from the slotgrid

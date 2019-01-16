@@ -15,8 +15,6 @@ public class Player : Destructible {
 	public event System.Action<int> OnHPChangeEvent;
 
 	public int digDamagesToRocks;
-
-	//public int digDamage = 1;
 	public float speed = 3f;
 	public float maxInteractionDistance = 0.5f; // maximum distance at which the player can destroy an object
 	public float maxConstructionDistance = 0.5f; // maximum distance at which the player can destroy an object
@@ -45,7 +43,8 @@ public class Player : Destructible {
 
 	UsableItem itemSlot;
 
-	void Awake () {
+	protected override void Awake () {
+		base.Awake();
 		buildingToPlace = null;
 		placingObject = false;
 		audioSource = gameObject.GetComponent<AudioSource>();
@@ -341,13 +340,16 @@ public class Player : Destructible {
 			OnHPChangeEvent(hp);
 		}
 	}
+	public override void heal(int value){
+		base.heal(value);
+		if (OnHPChangeEvent != null)
+		{
+			OnHPChangeEvent(hp);
+		}
+	}
 		
 	public bool isDead(){
 		return hp <= 0;
-	}
-
-	public int getHp(){
-		return hp;
 	}
 
 	public Camera getCamera(){
