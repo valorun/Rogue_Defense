@@ -119,6 +119,12 @@ public class UIManager : MonoBehaviour {
 		else
 			Time.timeScale = 1f;
 	}
+	public void backToMenu(){
+		GameManager.instance.backToMenu();
+	}
+	public void nextLevel(){
+		GameManager.instance.nextLevel();
+	}
 	public ItemSlot getItemSlot(){
 		return itemSlot;
 	}
