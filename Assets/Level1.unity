@@ -298,7 +298,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 7f105fd7774705149b31267d2c9817f0, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  baseTimeLeft: 15
+  baseTimeLeft: 80
   enemies:
   - {fileID: 1268399403761342, guid: 44d2fbc6b9c6e6543b66fd864486bb93, type: 2}
   - {fileID: 1736611632275742, guid: 706a150e06bee1d4e91325d4af5a57d1, type: 2}

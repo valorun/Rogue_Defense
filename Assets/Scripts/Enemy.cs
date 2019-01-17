@@ -70,7 +70,6 @@ public class Enemy : Destructible {
 	}
 	void updatePath(){
 		if (path.Count == 0 && nextPathCalculation <= time) {
-			Debug.Log("path");
 			setupPathfinding();
 			nextPathCalculation = time + pathCalculationSpeed;
 		}

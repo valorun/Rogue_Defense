@@ -8,7 +8,7 @@ public class MineralHealer : Healer {
 	void Update () {
 		time=GameManager.instance.getTime();
 		target = findMostDamaged();
-		Debug.Log (consumedPower);
+		Debug.Log (target);
 		if (target != null && power>=consumedPower) {
 			if (target.GetComponent<Building>()!=null)giveHeal ();
 			else if (target.GetComponent<OreVein>()!=null)healOreVein();
@@ -25,15 +25,17 @@ public class MineralHealer : Healer {
 			nextTick = time + healSpeed;
 		}
 	}
-	protected GameObject findMostDamaged(){
+	protected new GameObject findMostDamaged(){
 		Vector2 pos = new Vector2((int)transform.position.x, (int)transform.position.y);
 		GameObject mostDamaged = base.findMostDamaged();
-		if((mostDamaged!=null && mostDamaged.GetComponent<Building> ().getMissingHp ()<=0 ) || mostDamaged==null){ //if no building need heal, then heal ore
-			foreach(GameObject tempObj in MapManager.instance.getNearbyGameObjects(pos, 1)){
-				if (tempObj.GetComponent<OreVein> () != null) {
-					if (mostDamaged == null || tempObj.GetComponent<OreVein> ().getHp () < mostDamaged.GetComponent<OreVein> ().getHp ())
-						mostDamaged = tempObj;
-				}
+		if(mostDamaged!=null && mostDamaged.GetComponent<Building> ().getMissingHp ()>0 )
+			return mostDamaged;
+		//if no building need heal, then heal ore
+		mostDamaged=null;
+		foreach(GameObject tempObj in MapManager.instance.getNearbyGameObjects(pos, 1)){
+			if (tempObj.GetComponent<OreVein> () != null) {
+				if (mostDamaged == null || tempObj.GetComponent<OreVein> ().getHp () < mostDamaged.GetComponent<OreVein> ().getHp ())
+					mostDamaged = tempObj;
 			}
 		}
 		return mostDamaged;

@@ -10,7 +10,6 @@ public class UpgradeItem : UsableItem {
             Building selection = player.getSelectedTile();
             if(selection != null){
 				if (selection.hasUpgrade (type)) {
-					bool result = selection.upgrade (type);
 					RessourcesManager.SerializedRessource[] upgradeCosts = selection.getUpgradeCosts(type);
 					if (!player.enoughRessources (upgradeCosts)) {
 						PopupMessage.instance.ShowMessage ("Not enough ressources");
@@ -23,13 +22,13 @@ public class UpgradeItem : UsableItem {
 						selection.upgrade(type);
                         player.setItemInSlot(null);
 			            player.deselection();
+						return true;
                     }
-					return result;
 				}
 				else PopupMessage.instance.ShowMessage ("Item cannot be used on this building");
             }
+			else PopupMessage.instance.ShowMessage ("No building selected");
 		} 
-		else PopupMessage.instance.ShowMessage ("No building selected");
 		return false;
 	}
     public override bool isActivable(){

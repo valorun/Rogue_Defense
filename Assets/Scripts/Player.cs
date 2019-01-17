@@ -229,7 +229,7 @@ public class Player : Destructible {
 					setBuildingToPlace(null);
 			}
 			else{
-				Debug.Log ("Rien touché");
+				//Debug.Log ("Rien touché");
 				endPlaceBuilding();
 			}
 			if(placingObject)endPlaceBuilding ();
