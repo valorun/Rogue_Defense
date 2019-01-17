@@ -46,9 +46,6 @@ public class Building : Destructible {
 			OnHPChangeEvent(hp);
 	}
 
-	public int getHp(){
-		return hp;
-	}
 	public override void heal(int value){
 		base.heal(value);
 		if (OnHPChangeEvent != null)

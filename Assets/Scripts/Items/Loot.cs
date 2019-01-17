@@ -13,13 +13,13 @@ public class Loot : MonoBehaviour {
 	public void spawnLoot(){
 		int lootRNG = Random.Range(0, 100);
 		GameObject toInstantiate=null;
-		if(lootRNG > 70 && lootRNG < 90 && commonsLoots.Length>0){
+		if(lootRNG > 70 && lootRNG < 85 && commonsLoots.Length>0){
 			toInstantiate = commonsLoots[Random.Range(0, commonsLoots.Length)];
 		}
-		else if(lootRNG > 90 && lootRNG < 99 && raresLoots.Length>0){
+		else if(lootRNG > 85 && lootRNG < 95 && raresLoots.Length>0){
 			toInstantiate = raresLoots[Random.Range(0, raresLoots.Length)];
 		}
-		else if (lootRNG > 99 && epicsLoots.Length>0){
+		else if (lootRNG > 95 && epicsLoots.Length>0){
 			toInstantiate = epicsLoots[Random.Range(0, epicsLoots.Length)];
 		}
 		if (toInstantiate != null)

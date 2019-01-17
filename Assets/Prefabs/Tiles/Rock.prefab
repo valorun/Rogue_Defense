@@ -95,6 +95,8 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   commonsLoots:
   - {fileID: 1646692990287850, guid: b647ab2d18425304abb9a6b08f08c4a5, type: 2}
+  - {fileID: 1974389524907962, guid: 447c47878546e9240adcde9a06b86ec0, type: 2}
+  - {fileID: 1909603548497412, guid: 139d0a108260b2146b8ad23fe3f72ab1, type: 2}
   raresLoots:
   - {fileID: 1579172971808656, guid: fd53f4a21aa0e7242b8b2abaf8fb5bc9, type: 2}
   - {fileID: 1949853664485128, guid: 4bc7d1698836abf4793ee36e64bda6e9, type: 2}
