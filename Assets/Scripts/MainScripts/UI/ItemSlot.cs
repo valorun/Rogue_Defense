@@ -29,9 +29,6 @@ public class ItemSlot : MonoBehaviour {
 	}
 
 	public void updateIconColor(){
-		//Building building = GameManager.playerInstance.GetComponent<Player> ().getBuildingToPlace ();
-		//Building selection = player.getSelectedTile ();
-		//UsableItem item = player.getItemInSlot ();
 		if(item != null){
 			if (item.isActivable())
 				itemSlotIcon.color = new Color32 (255, 255, 255, 255);

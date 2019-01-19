@@ -15,7 +15,6 @@ public class UpgradeItem : UsableItem {
 						PopupMessage.instance.ShowMessage ("Not enough ressources");
 					}
                     else{
-						GameObject tempUpgrade = selection.getUpgrade (type);
 						foreach (RessourcesManager.SerializedRessource r in upgradeCosts) { // give back ressources of the building, because the upgrade will be buy after
 							player.gainRessource (r.name, r.value);
 						}

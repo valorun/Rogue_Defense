@@ -1262,7 +1262,6 @@ GameObject:
   - component: {fileID: 82040523311818386}
   - component: {fileID: 58239892502199902}
   - component: {fileID: 114726734277630192}
-  - component: {fileID: 114257380773036876}
   m_Layer: 0
   m_Name: Player
   m_TagString: Player
@@ -1357,7 +1356,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 0
+  m_IsActive: 1
 --- !u!1 &1514545462539894
 GameObject:
   m_ObjectHideFlags: 1
@@ -1468,6 +1467,7 @@ GameObject:
   m_Component:
   - component: {fileID: 224761067602054142}
   - component: {fileID: 114895629614871676}
+  - component: {fileID: 114580003978790528}
   m_Layer: 5
   m_Name: SoundSlider
   m_TagString: Untagged
@@ -2598,7 +2598,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 0
+  m_IsActive: 1
 --- !u!1 &1946544858938934
 GameObject:
   m_ObjectHideFlags: 1
@@ -3570,8 +3570,8 @@ MonoBehaviour:
   m_TargetGraphic: {fileID: 114755970849929022}
   m_HandleRect: {fileID: 224391189608424998}
   m_Direction: 2
-  m_Value: 1
-  m_Size: 0.8477929
+  m_Value: 0
+  m_Size: 0.56519544
   m_NumberOfSteps: 0
   m_OnValueChanged:
     m_PersistentCalls:
@@ -4633,22 +4633,6 @@ MonoBehaviour:
   m_FillAmount: 1
   m_FillClockwise: 1
   m_FillOrigin: 0
---- !u!114 &114257380773036876
-MonoBehaviour:
-  m_ObjectHideFlags: 1
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInternal: {fileID: 100100000}
-  m_GameObject: {fileID: 1485302679409772}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: e80aee2eece0acf4094994414582d104, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  volumeSlider: {fileID: 114895629614871676}
-  volumeIcon: {fileID: 114373853411993004}
-  volumeOn: {fileID: 21300000, guid: 65254aa0efb171f45863b6a1d2024af9, type: 3}
-  volumeOff: {fileID: 21300000, guid: b0ab5e96cc361c342b93a3d7c1acd965, type: 3}
-  updateSound: {fileID: 8300000, guid: dc6614beca09347ec9b258f12d154bdd, type: 3}
 --- !u!114 &114258694433690602
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -5267,7 +5251,7 @@ MonoBehaviour:
   m_OnClick:
     m_PersistentCalls:
       m_Calls:
-      - m_Target: {fileID: 0}
+      - m_Target: {fileID: 114612646136168842}
         m_MethodName: displayShop
         m_Mode: 1
         m_Arguments:
@@ -5278,7 +5262,7 @@ MonoBehaviour:
           m_StringArgument: 
           m_BoolArgument: 0
         m_CallState: 2
-      - m_Target: {fileID: 0}
+      - m_Target: {fileID: 82040523311818386}
         m_MethodName: PlayOneShot
         m_Mode: 2
         m_Arguments:
@@ -5385,7 +5369,7 @@ MonoBehaviour:
   m_OnClick:
     m_PersistentCalls:
       m_Calls:
-      - m_Target: {fileID: 0}
+      - m_Target: {fileID: 114612646136168842}
         m_MethodName: displayShop
         m_Mode: 1
         m_Arguments:
@@ -5396,7 +5380,7 @@ MonoBehaviour:
           m_StringArgument: 
           m_BoolArgument: 0
         m_CallState: 2
-      - m_Target: {fileID: 0}
+      - m_Target: {fileID: 82040523311818386}
         m_MethodName: PlayOneShot
         m_Mode: 2
         m_Arguments:
@@ -6760,6 +6744,22 @@ MonoBehaviour:
   m_FillAmount: 1
   m_FillClockwise: 1
   m_FillOrigin: 0
+--- !u!114 &114580003978790528
+MonoBehaviour:
+  m_ObjectHideFlags: 1
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  m_GameObject: {fileID: 1545029291582094}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: e80aee2eece0acf4094994414582d104, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  volumeIcon: {fileID: 114373853411993004}
+  volumeOn: {fileID: 21300000, guid: 65254aa0efb171f45863b6a1d2024af9, type: 3}
+  volumeOff: {fileID: 21300000, guid: b0ab5e96cc361c342b93a3d7c1acd965, type: 3}
+  updateSound: {fileID: 8300000, guid: dc6614beca09347ec9b258f12d154bdd, type: 3}
+  source: {fileID: 82040523311818386}
 --- !u!114 &114583402562757090
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -8658,18 +8658,7 @@ MonoBehaviour:
   m_Value: 0
   m_OnValueChanged:
     m_PersistentCalls:
-      m_Calls:
-      - m_Target: {fileID: 114257380773036876}
-        m_MethodName: updateVolume
-        m_Mode: 1
-        m_Arguments:
-          m_ObjectArgument: {fileID: 0}
-          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
-          m_IntArgument: 0
-          m_FloatArgument: 0
-          m_StringArgument: 
-          m_BoolArgument: 0
-        m_CallState: 2
+      m_Calls: []
     m_TypeName: UnityEngine.UI.Slider+SliderEvent, UnityEngine.UI, Version=1.0.0.0,
       Culture=neutral, PublicKeyToken=null
 --- !u!114 &114898822013944402
@@ -8812,7 +8801,7 @@ MonoBehaviour:
     m_TypeName: UnityEngine.UI.MaskableGraphic+CullStateChangedEvent, UnityEngine.UI,
       Version=1.0.0.0, Culture=neutral, PublicKeyToken=null
   m_FontData:
-    m_Font: {fileID: 10102, guid: 0000000000000000e000000000000000, type: 0}
+    m_Font: {fileID: 12800000, guid: 2550f68f36da7e64face9292a1e5e4fa, type: 3}
     m_FontSize: 25
     m_FontStyle: 0
     m_BestFit: 0
@@ -10626,8 +10615,8 @@ RectTransform:
   m_Father: {fileID: 224764360021918632}
   m_RootOrder: 8
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
-  m_AnchorMin: {x: 0.79, y: 0.1}
-  m_AnchorMax: {x: 0.89, y: 0.5}
+  m_AnchorMin: {x: 0.42, y: 0.5}
+  m_AnchorMax: {x: 0.47, y: 0.9}
   m_AnchoredPosition: {x: 0, y: 0}
   m_SizeDelta: {x: 0, y: 0}
   m_Pivot: {x: 0.5, y: 0.5}
@@ -10762,8 +10751,8 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 0}
   m_AnchorMax: {x: 1, y: 1}
-  m_AnchoredPosition: {x: 0.099998474, y: -1.5999985}
-  m_SizeDelta: {x: -5, y: -5}
+  m_AnchoredPosition: {x: 0, y: 0}
+  m_SizeDelta: {x: -10, y: -10}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!224 &224245890366387204
 RectTransform:
@@ -11060,8 +11049,8 @@ RectTransform:
   m_Father: {fileID: 224155845036243524}
   m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
-  m_AnchorMin: {x: 0, y: 0.15220708}
-  m_AnchorMax: {x: 1, y: 1}
+  m_AnchorMin: {x: 0, y: 0}
+  m_AnchorMax: {x: 1, y: 0.56519544}
   m_AnchoredPosition: {x: 0, y: 0}
   m_SizeDelta: {x: 20, y: 20}
   m_Pivot: {x: 0.5, y: 0.5}
@@ -11162,7 +11151,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 1}
   m_AnchorMax: {x: 1, y: 1}
-  m_AnchoredPosition: {x: 0, y: 0.00005340276}
+  m_AnchoredPosition: {x: 0, y: 53.859924}
   m_SizeDelta: {x: 0, y: 353.86}
   m_Pivot: {x: 0, y: 1}
 --- !u!224 &224430242914296192
@@ -11587,7 +11576,7 @@ RectTransform:
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInternal: {fileID: 100100000}
   m_GameObject: {fileID: 1510732963587610}
-  m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
   m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 0, y: 0, z: 0}
   m_Children:
@@ -11601,7 +11590,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 0}
   m_AnchorMax: {x: 0, y: 0}
-  m_AnchoredPosition: {x: 36.23767, y: -154.47249}
+  m_AnchoredPosition: {x: 0, y: 0}
   m_SizeDelta: {x: 0, y: 0}
   m_Pivot: {x: 0, y: 0}
 --- !u!224 &224548091567524434

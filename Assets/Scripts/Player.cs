@@ -8,6 +8,8 @@ public class Player : Destructible {
 
 	public event System.Action<Dictionary<string, int>> OnRessourcesChangeEvent;
 	public event System.Action<UsableItem> OnCollectItemEvent;
+	public event System.Action OnDropItemEvent;
+
 	public event System.Action<Building> OnPlaceBuildingEvent;
 	public event System.Action<Building> OnSelectBuildingEvent;
 	public event System.Action<Building> OnDeselectBuildingEvent;
@@ -260,8 +262,10 @@ public class Player : Destructible {
 	}
 	public void setItemInSlot(UsableItem item){
 		itemSlot=item;
-		if(OnCollectItemEvent != null)
+		if(item != null && OnCollectItemEvent != null)
 			OnCollectItemEvent(item);
+		if(item == null && OnDropItemEvent != null)
+			OnDropItemEvent();
 	}
 
 	public void setBuildingToPlace(Building building){
@@ -369,8 +373,13 @@ public class Player : Destructible {
 	}
 	public UsableItem dropItem(){
 		UsableItem tempItem = itemSlot;
-		setItemInSlot(null);
-		endPlaceBuilding();
+		if (tempItem != null){
+			setItemInSlot(null);
+			endPlaceBuilding();
+			if(!tempItem.drop()){
+				PopupMessage.instance.ShowMessage("Can't drop any item here");
+			}
+		}
 		return tempItem;
 	}
 

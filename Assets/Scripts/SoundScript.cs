@@ -2,22 +2,24 @@
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
+using UnityEngine.EventSystems;
 
-public class SoundScript : MonoBehaviour {
+public class SoundScript : MonoBehaviour, IPointerUpHandler {
 
-	public Slider volumeSlider;
+	private Slider volumeSlider;
 	public Image volumeIcon;
 	public Sprite volumeOn;
 	public Sprite volumeOff;
 	public AudioClip updateSound;
-	private AudioSource source;
+	public AudioSource source;
 	void Awake () {
+		volumeSlider = GetComponent<Slider>();
 		volumeSlider.value = PlayerPrefs.GetFloat ("volume", 0);
 		updateVolume ();
 	}
 
 	public void updateVolume(){
-		source = GetComponent<AudioSource> ();
+		//source = GetComponent<AudioSource> ();
 		AudioListener.volume = volumeSlider.value;
 		PlayerPrefs.SetFloat("volume", AudioListener.volume);
 		if(!source.isPlaying)source.PlayOneShot (updateSound);
@@ -25,5 +27,8 @@ public class SoundScript : MonoBehaviour {
 			volumeIcon.sprite = volumeOff;
 		else
 			volumeIcon.sprite = volumeOn;
+	}
+	 public void OnPointerUp(PointerEventData eventData){
+		 updateVolume();
 	}
 }

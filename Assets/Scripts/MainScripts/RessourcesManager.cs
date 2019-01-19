@@ -37,19 +37,14 @@ public class RessourcesManager : MonoBehaviour {
 		switch (ressource) {
 		case "gold":
 			return new Color32 (233,216,0,0);
-			break;
 		case "copper":
 			return new Color32 (208,88,29,0);
-			break;
 		case "iron":
 			return new Color32 (156,156,156,0);
-			break;
 		case "coal":
 			return new Color32 (38,38,38,0);
-			break;
 		case "uranium":
 			return new Color32 (0,183,0,0);
-			break;
 		}
 		return  new Color32 (0,0,0,0);
 	}

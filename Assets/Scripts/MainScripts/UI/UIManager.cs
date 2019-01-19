@@ -9,7 +9,6 @@ public class UIManager : MonoBehaviour {
 	public static UIManager instance = null;
 
 	public event System.Action OnCanvasEnabledEvent;
-
 	private Player player;
 	public Canvas uiCanvas;
 	public Canvas deathCanvas;
@@ -41,6 +40,7 @@ public class UIManager : MonoBehaviour {
 
 		player.OnRessourcesChangeEvent += OnRessourcesChange;
 		player.OnCollectItemEvent += OnCollectItem;
+		player.OnDropItemEvent += OnDropItem;
 
 		player.OnDiedEvent += deathMenu.display;
 		player.OnDiedEvent += checkUiCanBeDiplayed;
@@ -53,10 +53,12 @@ public class UIManager : MonoBehaviour {
 	void OnSelectBuilding(Building selection){
 		OnUpdateSelection(selection);
 		selection.OnHPChangeEvent += selectionBar.setHpDisplay;
+		selection.OnHPChangeEvent += (h) => {itemSlot.updateIconColor();};
 	}
 	void OnDeselectBuilding(Building selection){
 		OnUpdateSelection(null);
 		selection.OnHPChangeEvent -= selectionBar.setHpDisplay;
+		selection.OnHPChangeEvent -= (h) => {itemSlot.updateIconColor();};
 	}
 	void OnUpdateSelection(Building selection){
 		itemSlot.updateIconColor();
@@ -69,6 +71,9 @@ public class UIManager : MonoBehaviour {
 	}
 	void OnCollectItem(UsableItem item){
 		itemSlot.setItem(item);
+	}
+	void OnDropItem(){
+		itemSlot.setItem(null);
 	}
 	void OnPlaceBuildingEvent(Building building){
 		costsBar.updateDisplay(building);
@@ -149,6 +154,4 @@ public class UIManager : MonoBehaviour {
 	public HpIcon getHpIcon(){
 		return hpIcon;
 	}
-		
-
 }

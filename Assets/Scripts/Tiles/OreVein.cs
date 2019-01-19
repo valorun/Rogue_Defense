@@ -16,7 +16,6 @@ public class OreVein : Destructible {
 		Instantiate (damageParticles, particlesPos, Quaternion.identity);
 		if (hp <= 0){
 			MapManager.instance.resetPosition (gameObject.transform.position);
-			//Destroy(gameObject);
 		}
 	}
 

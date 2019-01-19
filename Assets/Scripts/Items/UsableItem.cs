@@ -8,7 +8,7 @@ public abstract class UsableItem : Item {
 	protected Player player;
 	public override bool collect(Player player){
 		this.player = player;
-		UsableItem playerItemSlot=player.takeItem (this);
+		UsableItem playerItemSlot=player.takeItem (this); //return the old item
 		gameObject.GetComponent<SpriteRenderer> ().enabled = false; //hide the physical object
 		gameObject.GetComponent<BoxCollider2D> ().enabled = false;
 		if (playerItemSlot == null) {
@@ -22,9 +22,26 @@ public abstract class UsableItem : Item {
 		//StartCoroutine (PopupMessage.instance.ShowMessage("You already have an object", 2f));
 		return true;
 	}
+	public bool drop(){
+		if(player == null)
+			return false;
+		else{
+			Vector2 pos = (Vector2)player.transform.position;
+			GameObject objAtPos = MapManager.instance.getObjectAt((int)pos.x, (int)pos.y);
+			if(objAtPos == null){
+				MapManager.instance.placeObjectAt (this.gameObject, (Vector2)transform.position);
+				this.gameObject.GetComponent<SpriteRenderer> ().enabled = true;
+				this.gameObject.GetComponent<BoxCollider2D> ().enabled = true;
+			}
+			else
+				return false;
+		}
+		return true;
+	} 
 	public abstract bool activate();
 
 	public abstract bool isActivable();
+
 	public Sprite getIcon(){
 		return icon;
 	}
